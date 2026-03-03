@@ -1,0 +1,66 @@
+name: Build FSNotes iOS (IPA for AltStore)
+
+# Runs on every push to master, OR manually via the Actions tab on GitHub
+on:
+  push:
+    branches: [master]
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: macos-latest
+
+    steps:
+      # ── 1. Check out your fork ──────────────────────────────────────────────
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      # ── 2. Cache CocoaPods to speed up subsequent runs ──────────────────────
+      - name: Cache CocoaPods
+        uses: actions/cache@v4
+        with:
+          path: Pods
+          key: ${{ runner.os }}-pods-${{ hashFiles('Podfile.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-pods-
+
+      # ── 3. Install CocoaPods dependencies ───────────────────────────────────
+      - name: Install CocoaPods
+        run: |
+          gem install cocoapods --no-document
+          pod install --repo-update
+
+      # ── 4. Archive the iOS app (no code signing — AltStore handles that) ────
+      - name: Archive FSNotes iOS
+        run: |
+          xcodebuild archive \
+            -workspace FSNotes.xcworkspace \
+            -scheme "FSNotes iOS" \
+            -configuration Release \
+            -destination "generic/platform=iOS" \
+            -archivePath "$RUNNER_TEMP/FSNotes.xcarchive" \
+            CODE_SIGN_IDENTITY="" \
+            CODE_SIGNING_REQUIRED=NO \
+            CODE_SIGNING_ALLOWED=NO \
+            ONLY_ACTIVE_ARCH=NO \
+            -quiet
+
+      # ── 5. Package the .app bundle into a .ipa ──────────────────────────────
+      #   AltStore will re-sign this IPA with your Apple ID when you install it.
+      - name: Package IPA
+        run: |
+          mkdir -p "$RUNNER_TEMP/ipa/Payload"
+          cp -r "$RUNNER_TEMP/FSNotes.xcarchive/Products/Applications/FSNotes iOS.app" \
+                "$RUNNER_TEMP/ipa/Payload/"
+          cd "$RUNNER_TEMP/ipa"
+          zip -r "FSNotes-iOS.ipa" Payload
+
+      # ── 6. Upload the .ipa as a downloadable artifact ───────────────────────
+      #   After the workflow finishes, go to Actions → your run → Artifacts
+      #   and download "FSNotes-iOS". Then drag the .ipa into AltStore.
+      - name: Upload IPA artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: FSNotes-iOS
+          path: ${{ runner.temp }}/ipa/FSNotes-iOS.ipa
+          retention-days: 14
