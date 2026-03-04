@@ -153,6 +153,11 @@ jobs:
       #   the generated file causes Swift compilation failures (3 errors).
       - name: Archive FSNotes iOS
         run: |
+          # Run xcodebuild and save the full log.
+          # We do NOT pipe through grep here because that swallows the exit code.
+          # Instead we let the full output stream to the Actions log via `tee`
+          # so errors ARE visible inline — just scroll up in this step's output.
+          set -o pipefail
           xcodebuild archive \
             -workspace FSNotes.xcworkspace \
             -scheme "FSNotes iOS" \
@@ -167,9 +172,15 @@ jobs:
             ASSETCATALOG_COMPILER_SKIP_APP_STORE_DEPLOYMENT=YES \
             ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS=NO \
             ASSETCATALOG_COMPILER_GENERATE_ASSET_SYMBOLS=NO \
-            2>&1 | tee "$RUNNER_TEMP/build.log"
-          # Preserve xcodebuild exit code through the pipe
-          exit ${PIPESTATUS[0]}
+            2>&1 | tee "$RUNNER_TEMP/build.log" || {
+            echo ""
+            echo "════════════════════════════════════════════"
+            echo "  BUILD FAILED — SWIFT / CLANG ERRORS:"
+            echo "════════════════════════════════════════════"
+            grep ": error:" "$RUNNER_TEMP/build.log" || echo "(no ': error:' lines matched)"
+            echo "════════════════════════════════════════════"
+            exit 1
+          }
 
       # ── 4b. Surface actual errors if the build failed ───────────────────────
       #   Swift errors look like:  /path/file.swift:10:5: error: ...
