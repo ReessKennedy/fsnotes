@@ -11,7 +11,7 @@ def ios_pods
     pod 'SSZipArchive', :git => 'https://github.com/glushchenko/ZipArchive.git', :branch => 'master'
     pod 'DropDown', '2.3.13'
     pod 'SwipeCellKit', :git => 'https://github.com/glushchenko/SwipeCellKit.git', :branch => 'develop'
-    pod 'CropViewController', '~> 3.1.0'  # 3.1.0+ gates iOS-26 UIKit APIs that don't exist in Xcode 16 SDK
+    pod 'CropViewController', :git => 'https://github.com/TimOliver/TOCropViewController.git', :tag => '3.1.1'  # pinned: gates iOS-26 Liquid Glass APIs absent from Xcode 16 SDK
 end
 
 def common_pods

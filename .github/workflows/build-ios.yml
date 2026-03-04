@@ -8,7 +8,10 @@ on:
 
 jobs:
   build:
-    runs-on: macos-latest   # Xcode 16 — required because FSNotes iOS targets iOS 18.0
+    runs-on: macos-15   # Pinned: macos-latest is now macos-26 (Xcode 26, GA Feb 2026).
+                         # Xcode 26 ships with iOS 26 SDK which triggers Liquid Glass UIKit
+                         # compile paths in CropViewController that still have SDK issues.
+                         # macos-15 = Xcode 16.x, which is what this project requires.
 
     steps:
       # ── 1. Check out your fork ──────────────────────────────────────────────
@@ -16,13 +19,13 @@ jobs:
         uses: actions/checkout@v4
 
       # ── 2. Cache CocoaPods to speed up subsequent runs ──────────────────────
+      #   NOTE: No restore-keys fallback — a broad fallback restores stale Pods
+      #   directories from previous cache keys, which defeats version pinning.
       - name: Cache CocoaPods
         uses: actions/cache@v4
         with:
           path: Pods
           key: ${{ runner.os }}-pods-${{ hashFiles('Podfile') }}
-          restore-keys: |
-            ${{ runner.os }}-pods-
 
       # ── 3. Install CocoaPods dependencies ───────────────────────────────────
       - name: Install CocoaPods
@@ -57,6 +60,16 @@ jobs:
         run: |
           echo "──────────── BUILD ERRORS ────────────"
           grep -E '(error:|fatal error:)' "$RUNNER_TEMP/build.log" | head -60 || echo "(no error lines found — scroll the Archive step above)"
+
+      # ── 4c. Upload full build log on failure for diagnosis ──────────────────
+      - name: Upload build log (on failure)
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: build-log
+          path: ${{ runner.temp }}/build.log
+          retention-days: 7
+
 
       # ── 5. Package the .app bundle into a .ipa ──────────────────────────────
       #   AltStore will re-sign this IPA with your Apple ID when you install it.
