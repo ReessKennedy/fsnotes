@@ -41,7 +41,7 @@ jobs:
       - name: Patch CropViewController (Xcode 16 SDK compatibility)
         run: |
           python3 - <<'PYEOF'
-          import sys
+          import sys, os
 
           path = 'Pods/CropViewController/Objective-C/TOCropViewController/TOCropViewController.m'
           try:
@@ -73,6 +73,8 @@ jobs:
           after = after.replace(BLOCK_END, BLOCK_END + '\n#endif  /* __IPHONE_OS_VERSION_MAX_ALLOWED >= 260000 */', 1)
           src = before + SENTINEL + '\n' + BLOCK_START + after
 
+          # CocoaPods marks :git source files read-only — make it writable first
+          os.chmod(path, 0o644)
           open(path, 'w').write(src)
           print('Patched TOCropViewController.m successfully ✓')
           PYEOF
