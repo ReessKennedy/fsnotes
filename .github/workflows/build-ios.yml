@@ -6,6 +6,9 @@ on:
     branches: [master]
   workflow_dispatch:
 
+permissions:
+  contents: write
+
 jobs:
   build:
     runs-on: macos-15   # Pinned: macos-latest is now macos-26 (Xcode 26, GA Feb 2026).
@@ -238,3 +241,51 @@ jobs:
           name: FSNotes-iOS
           path: ${{ runner.temp }}/ipa/FSNotes-iOS.ipa
           retention-days: 14
+
+      # ── 7. Generate AltStore apps.json Source ───────────────────────────────
+      - name: Generate apps.json
+        run: |
+          IPA_PATH="$RUNNER_TEMP/ipa/FSNotes-iOS.ipa"
+          IPA_SIZE=$(stat -f%z "$IPA_PATH")
+          DATE=$(date -u +"%Y-%m-%dT%H:%M:%SZ")
+          VERSION="1.0.${{ github.run_number }}"
+          
+          cat <<EOF > "$RUNNER_TEMP/apps.json"
+          {
+            "name": "Reess FSNotes Repository",
+            "identifier": "com.reesskennedy.fsnotes.source",
+            "apps": [
+              {
+                "name": "FSNotes",
+                "bundleIdentifier": "co.fluder.fsnotes",
+                "developerName": "Reess Kennedy",
+                "version": "$VERSION",
+                "versionDate": "$DATE",
+                "versionDescription": "Automated build from GitHub Actions",
+                "downloadURL": "https://github.com/ReessKennedy/fsnotes/releases/download/latest/FSNotes-iOS.ipa",
+                "localizedDescription": "FSNotes for iOS sideloaded via AltStore.",
+                "iconURL": "https://raw.githubusercontent.com/ReessKennedy/fsnotes/master/FSNotes%20iOS/Assets.xcassets/Icons/AppIconModern.imageset/classic-iOS-Default-1024x1024%401x.png",
+                "tintColor": "0180FF",
+                "size": $IPA_SIZE
+              }
+            ]
+          }
+          EOF
+
+      # ── 8. Publish the Release for AltStore ─────────────────────────────────
+      - name: Update latest tag
+        run: |
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+          git tag -fa latest -m "Update latest tag"
+          git push -f origin latest
+
+      - name: Publish Release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: latest
+          name: "Latest Build"
+          body: "Automated rolling release for AltStore updates. Copy the apps.json link below into AltStore Sources."
+          files: |
+            ${{ runner.temp }}/ipa/FSNotes-iOS.ipa
+            ${{ runner.temp }}/apps.json
