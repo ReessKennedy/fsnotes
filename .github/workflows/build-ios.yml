@@ -126,6 +126,7 @@ jobs:
             ONLY_ACTIVE_ARCH=NO \
             SWIFT_VERSION=5 \
             ASSETCATALOG_COMPILER_SKIP_APP_STORE_DEPLOYMENT=YES \
+            ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS=NO \
             2>&1 | tee "$RUNNER_TEMP/build.log"
           # Preserve xcodebuild exit code through the pipe
           exit ${PIPESTATUS[0]}
