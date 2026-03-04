@@ -257,7 +257,7 @@ jobs:
             "apps": [
               {
                 "name": "FSNotes",
-                "bundleIdentifier": "co.fluder.fsnotes",
+                "bundleIdentifier": "co.fluder.mobile.FSNotes-iOS",
                 "developerName": "Reess Kennedy",
                 "version": "$VERSION",
                 "versionDate": "$DATE",
