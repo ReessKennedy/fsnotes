@@ -279,10 +279,6 @@ class ViewController: UIViewController, UISearchBarDelegate, UIGestureRecognizer
         }
 
         navigationItem.title = folder
-        
-        if #available(iOS 26.0, *) {
-            navigationItem.subtitle = qty
-        }
     }
 
     public func configureNotifications() {
@@ -350,10 +346,6 @@ class ViewController: UIViewController, UISearchBarDelegate, UIGestureRecognizer
 
     public func configureToolbar() {
         var items = [UIBarButtonItem]()
-
-        if #available(iOS 26.0, *) {
-            items.append(navigationItem.searchBarPlacementBarButtonItem)
-        }
 
         items.append(.flexibleSpace())
 

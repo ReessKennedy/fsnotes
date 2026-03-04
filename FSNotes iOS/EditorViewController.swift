@@ -177,10 +177,6 @@ class EditorViewController: UIViewController,
     
     public func updateTitle() {
         navigationItem.title = note?.project.label
-        
-        if #available(iOS 26.0, *) {
-            navigationItem.subtitle = note?.url.lastPathComponent
-        }
     }
 
     private func registerForKeyboardNotifications() {
