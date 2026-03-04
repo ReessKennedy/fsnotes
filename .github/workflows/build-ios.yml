@@ -83,31 +83,55 @@ jobs:
       # ── 3c. Create modern.appiconset so actool thinning doesn't fail ─────────
       #   The project sets ASSETCATALOG_COMPILER_APPICON_NAME=modern but only
       #   has AppIconModern.imageset (wrong type). actool's thinned-variant
-      #   pass requires a proper appiconset. We build one from the same PNG.
+      #   pass requires a proper appiconset with explicit sizes.
+      #   We use the old-style multi-size format (same PNG for all) since
+      #   that is guaranteed compatible with every actool version.
       - name: Create modern.appiconset for actool
         run: |
-          ICON_DIR="FSNotes iOS/Assets.xcassets/Icons"
-          SRC_PNG="$ICON_DIR/AppIconModern.imageset/classic-iOS-Default-1024x1024@1x.png"
-          DEST="$ICON_DIR/modern.appiconset"
-          mkdir -p "$DEST"
-          cp "$SRC_PNG" "$DEST/"
-          cat > "$DEST/Contents.json" << 'EOF'
-          {
-            "images" : [
-              {
-                "filename" : "classic-iOS-Default-1024x1024@1x.png",
-                "idiom" : "universal",
-                "platform" : "ios",
-                "size" : "1024x1024"
-              }
-            ],
-            "info" : {
-              "author" : "xcode",
-              "version" : 1
-            }
-          }
-          EOF
-          echo "Created $DEST/Contents.json ✓"
+          python3 - << 'PYEOF'
+          import json, os, shutil
+
+          icon_dir = "FSNotes iOS/Assets.xcassets/Icons"
+          src_png  = f"{icon_dir}/AppIconModern.imageset/classic-iOS-Default-1024x1024@1x.png"
+          dest     = f"{icon_dir}/modern.appiconset"
+          png_name = "icon.png"
+
+          os.makedirs(dest, exist_ok=True)
+          shutil.copy(src_png, f"{dest}/{png_name}")
+
+          # Multi-size format: actool needs explicit entries for every variant
+          # it tries to thin. Using the same 1024×1024 source for all is fine
+          # for a sideloaded IPA — icons are not App-Store validated here.
+          sizes = [
+              ("iphone", "2x", "20x20"),
+              ("iphone", "3x", "20x20"),
+              ("iphone", "2x", "29x29"),
+              ("iphone", "3x", "29x29"),
+              ("iphone", "2x", "40x40"),
+              ("iphone", "3x", "40x40"),
+              ("iphone", "2x", "60x60"),
+              ("iphone", "3x", "60x60"),
+              ("ipad",   "1x", "20x20"),
+              ("ipad",   "2x", "20x20"),
+              ("ipad",   "1x", "29x29"),
+              ("ipad",   "2x", "29x29"),
+              ("ipad",   "1x", "40x40"),
+              ("ipad",   "2x", "40x40"),
+              ("ipad",   "1x", "76x76"),
+              ("ipad",   "2x", "76x76"),
+              ("ipad",   "2x", "83.5x83.5"),
+              ("ios-marketing", "1x", "1024x1024"),
+          ]
+          images = [{"filename": png_name, "idiom": idiom, "scale": scale, "size": size}
+                    for idiom, scale, size in sizes]
+
+          contents = {"images": images, "info": {"author": "xcode", "version": 1}}
+          with open(f"{dest}/Contents.json", "w") as f:
+              json.dump(contents, f, indent=2)
+
+          print(f"Created {dest}/Contents.json with {len(images)} size entries ✓")
+          PYEOF
+
 
       # ── 4. Archive the iOS app (no code signing — AltStore handles that) ─────
       #   SWIFT_VERSION=5 prevents Xcode 16 from enforcing Swift 6 strict
@@ -132,14 +156,28 @@ jobs:
           exit ${PIPESTATUS[0]}
 
       # ── 4b. Surface actual errors if the build failed ───────────────────────
-      #   Runs even on failure so you can see what went wrong without scrolling
       - name: Show build errors (if any)
         if: failure()
         run: |
-          echo "──────────── BUILD ERRORS ────────────"
-          grep -E '(error:|fatal error:)' "$RUNNER_TEMP/build.log" | head -60 || echo "(no error lines found — scroll the Archive step above)"
+          echo "──────────── GREP: lines containing 'error:' ────────────"
+          grep -n " error: " "$RUNNER_TEMP/build.log" | head -40 || echo "(grep found nothing)"
+          echo ""
+          echo "──────────── LAST 400 LINES OF BUILD LOG ────────────"
+          tail -400 "$RUNNER_TEMP/build.log"
 
-      # ── 4c. Upload full build log on failure for diagnosis ──────────────────
+      # ── 4c. Show GeneratedAssetSymbols.swift if it exists ───────────────────
+      - name: Show GeneratedAssetSymbols.swift (if any)
+        if: failure()
+        run: |
+          GSFILE=$(find ~/Library/Developer/Xcode/DerivedData -name "GeneratedAssetSymbols.swift" 2>/dev/null | head -1)
+          if [ -n "$GSFILE" ]; then
+            echo "Found: $GSFILE"
+            cat "$GSFILE"
+          else
+            echo "GeneratedAssetSymbols.swift not found in DerivedData"
+          fi
+
+      # ── 4d. Upload full build log on failure for diagnosis ──────────────────
       - name: Upload build log (on failure)
         if: failure()
         uses: actions/upload-artifact@v4
