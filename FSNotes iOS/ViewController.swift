@@ -288,7 +288,7 @@ class ViewController: UIViewController, UISearchBarDelegate, UIGestureRecognizer
             object: NSUbiquitousKeyValueStore.default)
 
         if NSUbiquitousKeyValueStore.default.synchronize() == false {
-            fatalError("This app was not built with the proper entitlement requests.")
+            print("This app was not built with the proper entitlement requests.")
         }
         
         NSUbiquitousKeyValueStore.default.synchronize()
