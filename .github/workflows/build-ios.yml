@@ -30,7 +30,7 @@ jobs:
           gem install cocoapods --no-document
           pod install --repo-update
 
-      # ── 4. Archive the iOS app (no code signing — AltStore handles that) ────
+      # ── 4. Archive2 the iOS app (no code signing — AltStore handles that) ────
       #   SWIFT_VERSION=5 prevents Xcode 16 from enforcing Swift 6 strict
       #   concurrency rules, which breaks older Swift packages (Shout, cgit2…)
       - name: Archive FSNotes iOS
