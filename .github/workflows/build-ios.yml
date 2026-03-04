@@ -8,7 +8,7 @@ on:
 
 jobs:
   build:
-    runs-on: macos-14   # Xcode 15 — more compatible with this project than macos-latest (Xcode 16)
+    runs-on: macos-latest   # Xcode 16 — required because FSNotes iOS targets iOS 18.0
 
     steps:
       # ── 1. Check out your fork ──────────────────────────────────────────────
