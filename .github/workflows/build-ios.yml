@@ -8,7 +8,7 @@ on:
 
 jobs:
   build:
-    runs-on: macos-latest
+    runs-on: macos-14   # Xcode 15 — more compatible with this project than macos-latest (Xcode 16)
 
     steps:
       # ── 1. Check out your fork ──────────────────────────────────────────────
@@ -42,8 +42,7 @@ jobs:
             CODE_SIGN_IDENTITY="" \
             CODE_SIGNING_REQUIRED=NO \
             CODE_SIGNING_ALLOWED=NO \
-            ONLY_ACTIVE_ARCH=NO \
-            -quiet
+            ONLY_ACTIVE_ARCH=NO
 
       # ── 5. Package the .app bundle into a .ipa ──────────────────────────────
       #   AltStore will re-sign this IPA with your Apple ID when you install it.
