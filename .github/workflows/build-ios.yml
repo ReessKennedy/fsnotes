@@ -172,15 +172,19 @@ jobs:
           exit ${PIPESTATUS[0]}
 
       # ── 4b. Surface actual errors if the build failed ───────────────────────
+      #   Swift errors look like:  /path/file.swift:10:5: error: ...
+      #   The old pattern " error: " (space prefix) never matched them.
+      #   Now we grep for ": error:" which matches Swift/clang/ld output.
       - name: Show build errors (if any)
         if: failure()
         run: |
-          echo "══════════ ERROR LINES WITH CONTEXT ══════════"
-          # Show each error line plus up to 5 lines of surrounding context
-          grep -n " error: \| warning: .*error" "$RUNNER_TEMP/build.log" | head -60 || echo "(no error: lines found)"
+          echo "══════════ SWIFT / CLANG ERROR LINES (with 3-line context) ══════════"
+          grep -n ": error:" "$RUNNER_TEMP/build.log" \
+            | head -80 \
+            || echo "(no ': error:' lines found — check LAST 300 LINES below)"
           echo ""
-          echo "══════════ LAST 500 LINES OF BUILD LOG ══════════"
-          tail -500 "$RUNNER_TEMP/build.log"
+          echo "══════════ LAST 300 LINES OF BUILD LOG ══════════"
+          tail -300 "$RUNNER_TEMP/build.log"
 
       # ── 4c. Show GeneratedAssetSymbols.swift if it exists ───────────────────
       - name: Show GeneratedAssetSymbols.swift (if any)
@@ -191,7 +195,7 @@ jobs:
             echo "Found: $GSFILE"
             cat "$GSFILE"
           else
-            echo "GeneratedAssetSymbols.swift not found in DerivedData"
+            echo "GeneratedAssetSymbols.swift not found in DerivedData — suppression is working ✓"
           fi
 
       # ── 4d. Upload full build log on failure for diagnosis ──────────────────
