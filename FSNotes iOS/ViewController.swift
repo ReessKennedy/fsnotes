@@ -933,6 +933,8 @@ class ViewController: UIViewController, UISearchBarDelegate, UIGestureRecognizer
     }
 
     @objc func newButtonAction() {
+        UIImpactFeedbackGenerator(style: .light).impactOccurred()
+
         if let project = sidebarTableView.getSidebarProjects()?.first, project.isEncrypted, project.password == nil {
             unlockProject(selectedProject: project, createNote: true)
             return
