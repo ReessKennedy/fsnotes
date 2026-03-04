@@ -1034,7 +1034,7 @@ class ViewController: UIViewController, UISearchBarDelegate, UIGestureRecognizer
         let evc = UIApplication.getEVC()
         editorViewController = evc
         
-        navigationController?.pushViewController(evc, animated: true)
+        navigationController?.pushViewController(evc, animated: false)
     }
 
     public func popViewController() {
