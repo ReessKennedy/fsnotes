@@ -31,6 +31,8 @@ jobs:
           pod install --repo-update
 
       # ── 4. Archive the iOS app (no code signing — AltStore handles that) ────
+      #   SWIFT_VERSION=5 prevents Xcode 16 from enforcing Swift 6 strict
+      #   concurrency rules, which breaks older Swift packages (Shout, cgit2…)
       - name: Archive FSNotes iOS
         run: |
           xcodebuild archive \
@@ -42,7 +44,19 @@ jobs:
             CODE_SIGN_IDENTITY="" \
             CODE_SIGNING_REQUIRED=NO \
             CODE_SIGNING_ALLOWED=NO \
-            ONLY_ACTIVE_ARCH=NO
+            ONLY_ACTIVE_ARCH=NO \
+            SWIFT_VERSION=5 \
+            2>&1 | tee "$RUNNER_TEMP/build.log"
+          # Preserve xcodebuild exit code through the pipe
+          exit ${PIPESTATUS[0]}
+
+      # ── 4b. Surface actual errors if the build failed ───────────────────────
+      #   Runs even on failure so you can see what went wrong without scrolling
+      - name: Show build errors (if any)
+        if: failure()
+        run: |
+          echo "──────────── BUILD ERRORS ────────────"
+          grep -E ' error: ' "$RUNNER_TEMP/build.log" | head -40 || echo "(no error lines found — scroll the Archive step above)"
 
       # ── 5. Package the .app bundle into a .ipa ──────────────────────────────
       #   AltStore will re-sign this IPA with your Apple ID when you install it.
