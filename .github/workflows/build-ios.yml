@@ -40,8 +40,11 @@ jobs:
       #   We wrap the block in a #if SDK-version check so Clang skips it.
       - name: Patch CropViewController (Xcode 16 SDK compatibility)
         run: |
+          # CocoaPods marks :git source files read-only — unlock the whole dir first
+          chmod -R u+w Pods/CropViewController/
+
           python3 - <<'PYEOF'
-          import sys, os
+          import sys
 
           path = 'Pods/CropViewController/Objective-C/TOCropViewController/TOCropViewController.m'
           try:
@@ -68,13 +71,11 @@ jobs:
               print('Check Pods/CropViewController/Objective-C/TOCropViewController/TOCropViewController.m')
               sys.exit(0)  # non-fatal so the build can still try
 
-          # Split on block start, replace BLOCK_END only in the text that follows
+          # Split on BLOCK_START; replace BLOCK_END only in the text that follows it
           before, after = src.split(BLOCK_START, 1)
           after = after.replace(BLOCK_END, BLOCK_END + '\n#endif  /* __IPHONE_OS_VERSION_MAX_ALLOWED >= 260000 */', 1)
           src = before + SENTINEL + '\n' + BLOCK_START + after
 
-          # CocoaPods marks :git source files read-only — make it writable first
-          os.chmod(path, 0o644)
           open(path, 'w').write(src)
           print('Patched TOCropViewController.m successfully ✓')
           PYEOF
