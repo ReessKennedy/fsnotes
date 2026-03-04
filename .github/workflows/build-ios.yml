@@ -14,6 +14,14 @@ jobs:
                          # macos-15 = Xcode 16.x, which is what this project requires.
 
     steps:
+      # ── 0. Show Xcode / SDK versions for diagnostics ────────────────────────
+      - name: Show Xcode and SDK versions
+        run: |
+          xcode-select -p
+          xcodebuild -version
+          xcrun --sdk iphoneos --show-sdk-version
+          swift --version
+
       # ── 1. Check out your fork ──────────────────────────────────────────────
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -136,6 +144,9 @@ jobs:
       # ── 4. Archive the iOS app (no code signing — AltStore handles that) ─────
       #   SWIFT_VERSION=5 prevents Xcode 16 from enforcing Swift 6 strict
       #   concurrency rules, which breaks older Swift packages (Shout, cgit2…)
+      #   ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS=NO is
+      #   now baked into project.pbxproj for the iOS target, but we keep the
+      #   command-line flag as a belt-and-suspenders safety net.
       - name: Archive FSNotes iOS
         run: |
           xcodebuild archive \
@@ -159,11 +170,12 @@ jobs:
       - name: Show build errors (if any)
         if: failure()
         run: |
-          echo "──────────── GREP: lines containing 'error:' ────────────"
-          grep -n " error: " "$RUNNER_TEMP/build.log" | head -40 || echo "(grep found nothing)"
+          echo "══════════ ERROR LINES WITH CONTEXT ══════════"
+          # Show each error line plus up to 5 lines of surrounding context
+          grep -n " error: \| warning: .*error" "$RUNNER_TEMP/build.log" | head -60 || echo "(no error: lines found)"
           echo ""
-          echo "──────────── LAST 400 LINES OF BUILD LOG ────────────"
-          tail -400 "$RUNNER_TEMP/build.log"
+          echo "══════════ LAST 500 LINES OF BUILD LOG ══════════"
+          tail -500 "$RUNNER_TEMP/build.log"
 
       # ── 4c. Show GeneratedAssetSymbols.swift if it exists ───────────────────
       - name: Show GeneratedAssetSymbols.swift (if any)
