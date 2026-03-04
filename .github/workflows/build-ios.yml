@@ -147,6 +147,10 @@ jobs:
       #   ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS=NO is
       #   now baked into project.pbxproj for the iOS target, but we keep the
       #   command-line flag as a belt-and-suspenders safety net.
+      #   ASSETCATALOG_COMPILER_GENERATE_ASSET_SYMBOLS=NO suppresses the
+      #   GeneratedAssetSymbols.swift file entirely — without this, actool
+      #   generates it even when SWIFT_ASSET_SYMBOL_EXTENSIONS is NO, and
+      #   the generated file causes Swift compilation failures (3 errors).
       - name: Archive FSNotes iOS
         run: |
           xcodebuild archive \
@@ -162,6 +166,7 @@ jobs:
             SWIFT_VERSION=5 \
             ASSETCATALOG_COMPILER_SKIP_APP_STORE_DEPLOYMENT=YES \
             ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS=NO \
+            ASSETCATALOG_COMPILER_GENERATE_ASSET_SYMBOLS=NO \
             2>&1 | tee "$RUNNER_TEMP/build.log"
           # Preserve xcodebuild exit code through the pipe
           exit ${PIPESTATUS[0]}
