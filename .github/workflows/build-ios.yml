@@ -20,7 +20,7 @@ jobs:
         uses: actions/cache@v4
         with:
           path: Pods
-          key: ${{ runner.os }}-pods-${{ hashFiles('Podfile.lock') }}
+          key: ${{ runner.os }}-pods-${{ hashFiles('Podfile') }}
           restore-keys: |
             ${{ runner.os }}-pods-
 
@@ -56,7 +56,7 @@ jobs:
         if: failure()
         run: |
           echo "──────────── BUILD ERRORS ────────────"
-          grep -E ' error: ' "$RUNNER_TEMP/build.log" | head -40 || echo "(no error lines found — scroll the Archive step above)"
+          grep -E '(error:|fatal error:)' "$RUNNER_TEMP/build.log" | head -60 || echo "(no error lines found — scroll the Archive step above)"
 
       # ── 5. Package the .app bundle into a .ipa ──────────────────────────────
       #   AltStore will re-sign this IPA with your Apple ID when you install it.
