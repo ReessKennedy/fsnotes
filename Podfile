@@ -89,5 +89,14 @@ post_install do |installer|
         config.build_settings['IPHONEOS_DEPLOYMENT_TARGET'] = '13.0'
       end
     end
+
+    # Blanket fix: newer Xcode (13+) reject iOS deployment targets below 12.0.
+    # This catches any pod (e.g. libcmark_gfm-iOS) that still ships with 9.0.
+    target.build_configurations.each do |config|
+      ios_target = config.build_settings['IPHONEOS_DEPLOYMENT_TARGET']
+      if ios_target && ios_target.to_f < 12.0
+        config.build_settings['IPHONEOS_DEPLOYMENT_TARGET'] = '12.0'
+      end
+    end
   end
 end
