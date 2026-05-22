@@ -13,3 +13,4 @@ agents.md
 .github/workflows/build-ios.yml
 docs/*
 !docs/README.md
+!docs/new-note-editor-speed.md
