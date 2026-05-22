@@ -141,6 +141,7 @@ class ViewController: EditorViewController,
     @IBOutlet weak var menuChangeCreationDate: NSMenuItem!
     
     @IBOutlet weak var counter: NSTextField!
+    @IBOutlet weak var notesCounterViewHeight: NSLayoutConstraint!
     @IBOutlet weak var notesCounter: NSTextField!
     
     // MARK: - Overrides
@@ -304,6 +305,8 @@ class ViewController: EditorViewController,
                 
         if (UserDefaultsManagement.horizontalOrientation) {
             self.splitView.isVertical = false
+            notesCounterViewHeight.constant = 0
+            notesCounter.isHidden = true
         }
 
         self.menuChangeCreationDate.title = NSLocalizedString("Change Creation Date", comment: "Menu")
@@ -985,9 +988,7 @@ class ViewController: EditorViewController,
             vc.sidebarOutlineView.deselectAllRows()
         }
 
-        let inlineTags = vc.sidebarOutlineView.getSelectedInlineTags()
-
-        _ = vc.createNote(content: inlineTags)
+        _ = vc.createNote()
     }
         
     @IBAction func fileName(_ sender: NSTextField) {
@@ -1255,7 +1256,7 @@ class ViewController: EditorViewController,
         
         notesTableView.beginUpdates()
         for note in updateViews {
-            notesTableView.reloadRow(note: note)
+            notesTableView.reloadRowSync(note: note)
 
             if search.stringValue.count == 0 {
                 sortAndMove(note: note)
@@ -1612,6 +1613,7 @@ class ViewController: EditorViewController,
         if srcIndex != dstIndex {
             notesTableView.moveRow(at: srcIndex, to: dstIndex)
             notesTableView.setNoteList(notes: resorted)
+            notesTableView.scrollRowToVisible(dstIndex)
         }
     }
     
