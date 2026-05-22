@@ -10,3 +10,4 @@ FSNotes.xcodeproj/xcuserdata/*
 AGENTS.md
 agents.md
 .DS_Store
+.github/workflows/build-ios.yml

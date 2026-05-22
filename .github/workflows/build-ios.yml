@@ -1,6 +1,6 @@
 name: Build FSNotes iOS (IPA for AltStore)
 
-# Runs on every push to master, OR manually via the Actions tab on GitHub
+# Runs on every push to master, OR manually via the Actions tab on GitHub 2
 on:
   push:
     branches: [master]
