@@ -3327,7 +3327,7 @@
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 332;
-				DEVELOPMENT_TEAM = 866P6MTE92;
+				DEVELOPMENT_TEAM = "";
 				INFOPLIST_FILE = "FSNotes iOS Share/Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 18.0;
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -3336,7 +3336,7 @@
 					"@executable_path/../../Frameworks",
 				);
 				MARKETING_VERSION = 7.1.2;
-				PRODUCT_BUNDLE_IDENTIFIER = "co.fluder.mobile.FSNotes-iOS.FSNotes-iOS-Share";
+				PRODUCT_BUNDLE_IDENTIFIER = "io.surgo.fsnotesplus.share";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = iphoneos;
 				SKIP_INSTALL = YES;
@@ -3361,7 +3361,7 @@
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 332;
-				DEVELOPMENT_TEAM = 866P6MTE92;
+				DEVELOPMENT_TEAM = "";
 				ENABLE_NS_ASSERTIONS = NO;
 				INFOPLIST_FILE = "FSNotes iOS Share/Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 18.0;
@@ -3371,7 +3371,7 @@
 					"@executable_path/../../Frameworks",
 				);
 				MARKETING_VERSION = 7.1.2;
-				PRODUCT_BUNDLE_IDENTIFIER = "co.fluder.mobile.FSNotes-iOS.FSNotes-iOS-Share";
+				PRODUCT_BUNDLE_IDENTIFIER = "io.surgo.fsnotesplus.share";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = iphoneos;
 				SKIP_INSTALL = YES;
@@ -3403,7 +3403,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 332;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
-				DEVELOPMENT_TEAM = 866P6MTE92;
+				DEVELOPMENT_TEAM = "";
 				INFOPLIST_FILE = "FSNotes iOS/Info.plist";
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.productivity";
 				IPHONEOS_DEPLOYMENT_TARGET = 18.0;
@@ -3412,7 +3412,7 @@
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 7.1.2;
-				PRODUCT_BUNDLE_IDENTIFIER = "co.fluder.mobile.FSNotes-iOS";
+				PRODUCT_BUNDLE_IDENTIFIER = "io.surgo.fsnotesplus";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE = "";
 				PROVISIONING_PROFILE_SPECIFIER = "";
@@ -3445,7 +3445,7 @@
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 332;
-				DEVELOPMENT_TEAM = 866P6MTE92;
+				DEVELOPMENT_TEAM = "";
 				ENABLE_NS_ASSERTIONS = NO;
 				INFOPLIST_FILE = "FSNotes iOS/Info.plist";
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.productivity";
@@ -3455,7 +3455,7 @@
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 7.1.2;
-				PRODUCT_BUNDLE_IDENTIFIER = "co.fluder.mobile.FSNotes-iOS";
+				PRODUCT_BUNDLE_IDENTIFIER = "io.surgo.fsnotesplus";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE = "";
 				PROVISIONING_PROFILE_SPECIFIER = "";

@@ -85,7 +85,7 @@
 			<key>CFBundleURLIconFile</key>
 			<string>makeNote</string>
 			<key>CFBundleURLName</key>
-			<string>co.fluder.mobile.FSNotes-iOS</string>
+			<string>io.surgo.fsnotesplus</string>
 			<key>CFBundleURLSchemes</key>
 			<array>
 				<string>fsnotes</string>
@@ -97,7 +97,7 @@
 			<key>CFBundleURLIconFile</key>
 			<string>makeNote</string>
 			<key>CFBundleURLName</key>
-			<string>co.fluder.mobile.FSNotes-iOS</string>
+			<string>io.surgo.fsnotesplus</string>
 			<key>CFBundleURLSchemes</key>
 			<array>
 				<string>nv</string>
@@ -109,7 +109,7 @@
 			<key>CFBundleURLIconFile</key>
 			<string>makeNote</string>
 			<key>CFBundleURLName</key>
-			<string>co.fluder.mobile.FSNotes-iOS</string>
+			<string>io.surgo.fsnotesplus</string>
 			<key>CFBundleURLSchemes</key>
 			<array>
 				<string>nvalt</string>
@@ -178,7 +178,7 @@
 	</array>
 	<key>NSUbiquitousContainers</key>
 	<dict>
-		<key>iCloud.co.fluder.fsnotes</key>
+		<key>iCloud.io.surgo.fsnotesplus</key>
 		<dict>
 			<key>NSUbiquitousContainerIsDocumentScopePublic</key>
 			<true/>

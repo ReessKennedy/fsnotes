@@ -33,7 +33,7 @@ public class UserDefaultsManagement {
     typealias Image = UIImage
     typealias Font = UIFont
 
-    public static var shared: UserDefaults? = UserDefaults(suiteName: "group.es.fsnot.user.defaults")
+    public static var shared: UserDefaults? = UserDefaults(suiteName: "group.io.surgo.fsnotesplus")
     static var DefaultFontSize = 17
 #endif
 
@@ -863,7 +863,7 @@ public class UserDefaultsManagement {
     static var fileContainer: NoteContainer {
         get {
             #if SHARE_EXT
-                let defaults = UserDefaults.init(suiteName: "group.es.fsnot.user.defaults")
+                let defaults = UserDefaults.init(suiteName: "group.io.surgo.fsnotesplus")
                 if let result = defaults?.object(forKey: Constants.SharedContainerKey) as? Int, let container = NoteContainer(rawValue: result) {
                     return container
                 }
@@ -876,7 +876,7 @@ public class UserDefaultsManagement {
         }
         set {
             #if os(iOS)
-            UserDefaults.init(suiteName: "group.es.fsnot.user.defaults")?.set(newValue.rawValue, forKey: Constants.SharedContainerKey)
+            UserDefaults.init(suiteName: "group.io.surgo.fsnotesplus")?.set(newValue.rawValue, forKey: Constants.SharedContainerKey)
             #endif
 
             shared?.set(newValue.rawValue, forKey: Constants.NoteContainer)
@@ -1718,7 +1718,7 @@ public class UserDefaultsManagement {
     
     static var projects: [URL] {
         get {
-            guard let defaults = UserDefaults.init(suiteName: "group.es.fsnot.user.defaults") else { return [] }
+            guard let defaults = UserDefaults.init(suiteName: "group.io.surgo.fsnotesplus") else { return [] }
 
             if let data = defaults.data(forKey: Constants.ProjectsKeyNew), let urls = try? NSKeyedUnarchiver.unarchivedObject(ofClasses: [NSArray.self, NSURL.self], from: data) as? [URL] {
                 return urls
@@ -1727,7 +1727,7 @@ public class UserDefaultsManagement {
             return []
         }
         set {
-            guard let defaults = UserDefaults.init(suiteName: "group.es.fsnot.user.defaults") else { return }
+            guard let defaults = UserDefaults.init(suiteName: "group.io.surgo.fsnotesplus") else { return }
 
             if let data = try? NSKeyedArchiver.archivedData(withRootObject: newValue, requiringSecureCoding: true) {
                 defaults.set(data, forKey: Constants.ProjectsKeyNew)
