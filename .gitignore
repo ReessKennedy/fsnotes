@@ -5,3 +5,8 @@ Podfile.lock
 FSNotes.xcworkspace/xcshareddata/*
 FSNotes.xcworkspace/xcuserdata/*
 FSNotes.xcodeproj/xcuserdata/*
+.AI/
+.ai/
+AGENTS.md
+agents.md
+.DS_Store
