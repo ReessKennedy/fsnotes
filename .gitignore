@@ -11,3 +11,5 @@ AGENTS.md
 agents.md
 .DS_Store
 .github/workflows/build-ios.yml
+docs/*
+!docs/README.md
