@@ -3,6 +3,8 @@ Pods
 xcuserdata
 Podfile.lock
 FSNotes.xcworkspace/xcshareddata/*
+!FSNotes.xcworkspace/xcshareddata/swiftpm/
+!FSNotes.xcworkspace/xcshareddata/swiftpm/Package.resolved
 FSNotes.xcworkspace/xcuserdata/*
 FSNotes.xcodeproj/xcuserdata/*
 .AI/
